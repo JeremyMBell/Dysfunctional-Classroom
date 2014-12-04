@@ -25,5 +25,5 @@ public class Classroom {
         classmates = a;
         possibleRoles = b;
     }
-    
+    public Character[] classmates() {return classmates;} 
 }

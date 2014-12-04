@@ -61,11 +61,13 @@ public class Character {
     private Role role;
     private final String name;
     private final Boolean isMale;
+    private Boolean failed = false;
     public Character(Role a, String b) {
         role = a;
         name = b;
         double rand = Math.floor(Math.random() * 2);
-        if(a.getRole().equals("Queen Bee") || rand != 0) isMale = false;
+        if(a.getRole().toString().equals("Queen Bee") || rand != 0)
+            isMale = false;
         else isMale = true;
         
     }
@@ -83,6 +85,7 @@ public class Character {
         for (Role.Ability ablt:getAbilities())
             for (Role.Ability atkAblt: attacker.getAbilities())
                 if (!ablt.targetedBy(atkAblt, attacker)) return false;
+        failed = true;
         return true;
     }
     public static class Role {
