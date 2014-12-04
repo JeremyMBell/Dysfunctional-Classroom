@@ -1,4 +1,7 @@
 package frame;
+
+import java.util.LinkedList;
+
 public class Character {
     public final static Role[] allRoles = 
     {
@@ -8,7 +11,7 @@ public class Character {
         //Nerd will score perfect on tests
         new Role("Nerd", "You're the geek in the top-tenth percentile in your school.", Role.DORK, new int[] {Role.CANT_FAIL}),
         
-        //Know-it-all thinks they're a nerd until proven they aren't
+        //Know-it-all thinks they're a nerd until teacher fails them
         new Role("Nerd", "You're the geek in the top-tenth percentile in your school.", Role.DORK, new int[] {Role.NONE}),
         
         //High Achiever will not be distracted by popular kids
@@ -56,8 +59,8 @@ public class Character {
         new Role("Teacher", "You're stuck with these rascals.", Role.TEACHER, new int[]{Role.FAIL})
     };
     private Role role;
-    private String name;
-    private Boolean isMale;
+    private final String name;
+    private final Boolean isMale;
     public Character(Role a, String b) {
         role = a;
         name = b;
@@ -74,12 +77,12 @@ public class Character {
     public Role.Ability[] getAbilities() {return role.getAbilities();}
     public String getName() {return name;}
     public int getTeamID() {return role.getTeamID();}
+    public Boolean isMale() {return isMale;}
     public void setRole(Role newRole) {role = newRole;}
-    public Boolean targettedBy(Character attacker) {
-        Role.Ability[] ablts = getAbilities();
-        for (Role.Ability ablt:ablts)
-            if (!ablt.targettedBy(attacker))
-                return false;
+    public Boolean targetedBy(Character attacker) {
+        for (Role.Ability ablt:getAbilities())
+            for (Role.Ability atkAblt: attacker.getAbilities())
+                if (!ablt.targetedBy(atkAblt, attacker)) return false;
         return true;
     }
     public static class Role {
@@ -134,9 +137,9 @@ public class Character {
         public static final int PUBLISH = 12;
         
         
-        private String role, desc;
-        private int obj;
-        private int[] ablt;
+        private final String role, desc;
+        private final int obj;
+        private final int[] ablt;
         public Role(String a, String b, int c, int[] d) {
             /** public Role(String a, String b, int c, int[] d)
              *  Parameters
@@ -165,42 +168,45 @@ public class Character {
         public static class Ability {
             private final String flavorText;
             private final int id;
+            private Boolean attacked;
+            private LinkedList<Character> attackedBy = new LinkedList<>();
             public Ability(String desc, int id) {
                 flavorText = desc;
                 this.id = id;
             }
-            public Boolean targettedBy(Character attacker) {
-                Ability[] abilities = attacker.getAbilities();
-                
-                //Nerd & Queen Bee not affected by Teacher. Queen Bee not affected by Cheater
-                for (int i = 0; (id == 0 || id == 8) && i < abilities.length; i++)
-                    if (abilities[i].getID() == 10) return false;
-                    else if (id == 8 && abilities[i].getID() == 7) return false;
-                
-                //Overachiever isn't affected by popular kids
-                if (id == 1 && attacker.getTeamID() == Role.POPULAR_KID) return false;
-                
-                //Frantic will attack people that try to attack
-                else if (id == 2 && attacker.getTeamID() == Role.POPULAR_KID || attacker.getTeamID() == Role.TEACHER || attacker.getTeamID() == Role.NEUTRAL) {
-                    target(attacker);
+            public Boolean targetedBy(Ability attacker, Character person) {
+                attackedBy.add(person);
+                attacked = true;
+                Boolean isPopular = attacker.getID() == 3 ||
+                            attacker.getID() == 4 || attacker.getID() == 6 ||
+                            attacker.getID() == 8 || attacker.getID() == 9;
+                //Nerd & Queen Bee & Frantic not affected by Teacher.
+                if ((id == 0 || id == 2 || id == 8) && attacker.getID() == 10)
                     return false;
-                }
                 
-                //Teacher isn't affected by anyone
-                else if (id == 10) return false;
+                //Queen Bee & Frantic not affected by Cheater
+                else if ((id == 8 || id == 2) && attacker.getID() == 7)
+                    return false;
                 
-                //If it goes thru this whole thing, then they were attacked
+                //Frantic not affected by popular kids.
+                else if ((id == 2) && isPopular) return false;
+                
+                //Frantic isn't affected by Teacher
+                else if (id == 2 && attacker.getID() == 10) return false;
+                
+                //Teacher isn't affected by anyone but frantic
+                else if (id == 10 && attacker.getID() != 2) return false;
+                
+                //If it goes thru this whole thing, then they were successfully attacked
                 else return true;
             }
-            public void target(Character victim) {
-                
-            
-            }
-            public void perform(Character victim) {
-                if(id == 5 || id == 9 || id == 11 || id == 0 || id == 1 || id == 2)
-                    return;
-                else if (victim == null) return;
-                else target(victim);
+            public void perform(Character me, Character victim) {
+                if(!(id == 5 || id == 9 || id == 11 || id == 0 || id == 1 ||
+                   id == 2 || victim == null)) victim.targetedBy(me);
+                else if(id == 2 && attacked)
+                    for (Character assailant:attackedBy)
+                        assailant.targetedBy(me);
+                        
             }
             
             public String toString(){return flavorText;}
