@@ -17,7 +17,9 @@ public class Test {
         
     }
     public void runTest() {
-        //for (Character testPerson: testAbltClassmates)
+        for (Character testPerson: testAbltClassmates)
+            for (Character.Role.Ability ablt:testPerson.getAbilities())
+                ablt.perform(testPerson, classmates.classmates()[0]);//They have to choose target...
     }
     
 }
