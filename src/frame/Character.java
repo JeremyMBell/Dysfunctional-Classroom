@@ -7,13 +7,64 @@ public class Character {
     private Role role;
     private final String name;
     private final Boolean isMale;
-    private Boolean failed = false;
+    private Boolean failed = false, distracted = false;
+    private final LinkedList<Character> atkers = new LinkedList<>();
     public Character(Role a, String b) {
         role = a;
         name = b;
         double rand = Math.floor(Math.random() * 2);
         isMale = a == Role.queenBee || rand != 0;
         
+    }
+    
+    public static enum Ability {
+        noFail("The teacher and tutor have no effect on you."),
+        falseInfo("Make people fail between tests by giving them bad information."),
+        popImmune("You aren't affected by popular kids."),
+        fail("Fail people, but be carefull, parents or the frantic may notice."),
+        tattle("Anyone trying to get you failing will get tattled on (except tutor)."),
+        tellJoke("Class respect will earn you 3 votes when you start joking."),
+        report("Stalk people to find out their secrets and publish it in the school paper."),
+        beatUp("Beat up kids of the same gender to get their answers."),
+        scare("Scare people out the class."),
+        charm("You charm the opposite gender to give you their answers."),
+        distract("Prevent a person from performing by talking to them during the test."),
+        swap("Swap a person's test with your failing one."),
+        chooseTutor("Choose a tutor before a test to help someone with the material."),
+        none("None");
+        private final String description;
+        Ability(String a) {
+            description = a;
+        }
+        @Override
+        public String toString(){return description;}
+        
+    }
+    public static enum Immunity {
+        all(Ability.values()),
+        teacher(new Ability[]{Ability.fail}),
+        tutor(new Ability[] {Ability.falseInfo}),
+        popular(new Ability[] {Ability.beatUp, Ability.charm, Ability.distract,
+                               Ability.scare}),
+        cheater(new Ability[]{Ability.swap}),
+        none(new Ability[0]);
+        
+        private final Ability[] ablts;
+        Immunity(Ability[] a) {
+            ablts = a;
+        }
+        /**
+         * 
+         * @param ablt
+         * @return true if this immunity includes the role.
+         */
+        public Boolean immuneTo(Ability ablt) {
+            if (ablt == Ability.tattle) return false;
+            for (Ability immuneAblt: ablts)
+                if (immuneAblt == ablt)
+                    return true;
+            return false;
+        }
     }
     public static enum Role {
         //======================================================================
@@ -112,78 +163,64 @@ public class Character {
             ablts = d;
             immunities = e;
         }
-        static Role[] getTeamMembers(Team team) {
+        /**
+         *
+         * @param team - The team that you want to find roles for.
+         * @return Role[] - Roles that people on that team can have
+         */
+        public static Role[] getTeamMembers(Team team) {
+            if (team == null) return values();
             LinkedList<Role> roles = new LinkedList<>();
             for (Role role : Role.values())
                 if (role.team == team)
                     roles.add(role);
             return roles.toArray(new Role[roles.size()]);
         }
-        static Ability[] getTeamAbilities(Team team) {
+        /**
+         * 
+         * @param team - The team that you want to find abilities for.
+         * @return Ability[] - Abilities people on that team can have
+         */
+        public static Ability[] getTeamAbilities(Team team) {
+            if (team == null) return Ability.values();
             LinkedList<Ability> abilities = new LinkedList<>();
             for (Role role : Role.values())
                 if (role.team == team)
                     abilities.addAll(Arrays.asList(role.ablts));
             return abilities.toArray(new Ability[abilities.size()]);
         }
-        Boolean immuneTo(Role role){
-            for(Immunity immune: immunities)
-                if (immune.immuneTo(role)) return true;
-            return false;
-        }
-        Team getTeam(){return this.team;}
-        Ability[] getAbilities() {return ablts;}
-        public String toString(){return name;}
-        public String getDescription(){return description;}
-    }
-    
-    public static enum Ability {
-        noFail("The teacher and tutor have no effect on you."),
-        falseInfo("Make people fail between tests by giving them bad information."),
-        popImmune("You aren't affected by popular kids."),
-        fail("Fail people, but be carefull, parents or the frantic may notice."),
-        tattle("Anyone trying to get you failing will get tattled on (except tutor)."),
-        tellJoke("Class respect will earn you 3 votes when you start joking."),
-        report("Stalk people to find out their secrets and publish it in the school paper."),
-        beatUp("Beat up kids of the same gender to get their answers."),
-        scare("Scare people out the class."),
-        charm("You charm the opposite gender to give you their answers."),
-        distract("Prevent a person from performing by talking to them during the test."),
-        swap("Swap a person's test with your failing one."),
-        chooseTutor("Choose a tutor before a test to help someone with the material."),
-        none("None");
-        private final String description;
-        Ability(String a) {
-            description = a;
-        }
-        public String toString(){return description;}
-        
-    }
-    public static enum Immunity {
-        all(Role.values()),
-        teacher(new Role[] {Role.teacher}),
-        tutor(new Role[]{Role.tutor}),
-        popular(Role.getTeamMembers(Team.popular)),
-        cheater(new Role[] {Role.cheater}),
-        none(new Role[0]);
-        
-        private final Role[] roles;
-        Immunity(Role[] a) {
-            roles = a;
-        }
         /**
          * 
-         * @param role
-         * @return true if this immunity includes the role.
+         * @param Role - role that is targetting
+         * @return Boolean - returns if the person is immune
          */
-        public Boolean immuneTo(Role role) {
-            if (role == Role.frantic) return false;
-            for (Role immuneRole: roles)
-                if (immuneRole == role)
-                    return true;
+        Boolean immuneTo(Role role){
+            
+            //Loops over all the abilities (in case of multiple abilities)
+            for(Immunity immune: immunities)
+                for (Ability ablt: role.getAbilities())
+                    if (immune.immuneTo(ablt)) return true;
             return false;
         }
+        public Team getTeam(){return this.team;}
+        public Ability[] getAbilities() {return ablts;}
+        @Override
+        public String toString(){return name;}
+        public String getDescription(){return description;}
+        /**
+         * 
+         * @return True if the role causes a student to transfer (Failing/Scaring)
+         */
+        public Boolean transferRole() {
+            for (Ability ablt:ablts)
+                if (ablt == Ability.fail || ablt == Ability.tattle ||
+                    ablt == Ability.swap || ablt == Ability.scare)
+                    return true;
+            return false;
+            
+        }
     }
+    
     public static enum Team {
         dork("Get rid of the popular kids."),
         popular("Get rid of the nonpopular kids."),
@@ -200,15 +237,24 @@ public class Character {
     public String getRoleDesc() {return role.getDescription();}
     public Team getTeam() {return role.getTeam();}
     public Ability[] getAbilities() {return role.getAbilities();}
+    @Override
     public String toString() {return name;}
     public Boolean isMale() {return isMale;}
     public void setRole(Role newRole) {role = newRole;}
-    public Boolean targetedBy(Character attacker) {
-        for (Role.Ability ablt:getAbilities())
-            for (Role.Ability atkAblt: attacker.getAbilities())
-                if (!ablt.targetedBy(atkAblt, attacker)) return false;
-        failed = true;
-        return true;
+    public Boolean target(Character victim) {
+        if(!distracted && victim.attackedBy(this)) {
+            System.out.println("You succeeded in targetting " + victim + "(" + victim.getRole() + ")");
+            
+            return true;
+        }
+        else if (distracted) System.out.println("Someone distracted you during the test.");
+        else System.out.println(victim + "(" + victim.getRole() + ") is immune to your attack.");
+        distracted = false;
+        return false;
+    }
+    public Boolean attackedBy(Character attacker) {
+        atkers.add(attacker);
+        return !role.immuneTo(attacker.getRole());
     }
     
     

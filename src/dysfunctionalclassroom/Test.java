@@ -9,20 +9,28 @@ public class Test {
     public Test(Classroom a) {
         classmates = a;
         Character[] people = a.classmates();
-        int[] order = {6, 3, 4, 12, 10, 8, 2};
-        for (int i = 0; i < order.length; i++)
-            for (int i2 = 0; i2 < people.length; i2++)
-                for (Character.Role.Ability ablt: people[i2].getAbilities())
-                    if (ablt.getID() == order[i])
-                        testAbltClassmates.add(people[i2]);
+        Character.Ability[] order = {Character.Ability.distract, Character.Ability.beatUp,
+                       Character.Ability.charm, Character.Ability.report, 
+                       Character.Ability.fail, Character.Ability.scare,
+                       Character.Ability.tattle};
+        for (Character.Ability curr:order)
+            for (Character person: people)
+                for (Character.Ability ablt: person.getAbilities())
+                    if (ablt == curr)
+                        testAbltClassmates.add(person);
         
     }
     public void runTest() {
-        for (Character testPerson: testAbltClassmates)
-            for (Character.Role.Ability ablt:testPerson.getAbilities()) {
-                System.out.println(testPerson.toString() + ":" + ablt.toString());
-                ablt.perform(testPerson, classmates.classmates()[Input.receiveInput()]);//They have to choose target...
-            }
+        LinkedList<Character> failed = new LinkedList<>();
+        for (Character testPerson: testAbltClassmates){
+            System.out.println("\n" + testPerson + ":" + testPerson.getRole());
+            Boolean targetSuccess = testPerson.target(classmates.classmates()[Input.receiveInput()]);
+            if(testPerson.getRole().transferRole() && targetSuccess)
+                failed.add(testPerson);
+        }
+        for (Character failedKid:failed)
+            System.out.println(failedKid + " transferred since the last test.");
+        
     }
     
 }
