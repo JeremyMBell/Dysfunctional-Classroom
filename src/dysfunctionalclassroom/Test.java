@@ -9,10 +9,12 @@ public class Test {
     public Test(Classroom a) {
         classmates = a;
         Character[] people = a.classmates();
+        
+        //Priority of people
         Character.Ability[] order = {Character.Ability.distract, Character.Ability.beatUp,
                        Character.Ability.charm, Character.Ability.report, 
                        Character.Ability.fail, Character.Ability.scare,
-                       Character.Ability.tattle};
+                       Character.Ability.swap, Character.Ability.tattle};
         for (Character.Ability curr:order)
             for (Character person: people)
                 for (Character.Ability ablt: person.getAbilities())
@@ -20,7 +22,7 @@ public class Test {
                         testAbltClassmates.add(person);
         
     }
-    public void runTest() {
+    public LinkedList<Character> runTest() {
         LinkedList<Character> failed = new LinkedList<>();
         for (Character testPerson: testAbltClassmates){
             System.out.println("\n" + testPerson + ":" + testPerson.getRole());
@@ -30,6 +32,7 @@ public class Test {
         }
         for (Character failedKid:failed)
             System.out.println(failedKid + " transferred since the last test.");
+        return failed;
         
     }
     
