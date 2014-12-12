@@ -38,6 +38,7 @@ public class Classroom {
         testing = new Test(this);
         try {
                 gui = new Output("Dysfunctional Classroom");
+                gui.setClassroom(this);
                 window = new AppGameContainer(gui);
                 window.setDisplayMode(900, 600, false);
                 window.start();

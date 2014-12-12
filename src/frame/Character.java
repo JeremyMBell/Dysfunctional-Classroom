@@ -11,9 +11,11 @@ public class Character {
     private final LinkedList<Character> atkers = new LinkedList<>();
     public Character(Role a, String b) {
         role = a;
-        name = b;
         double rand = Math.floor(Math.random() * 2);
-        isMale = a == Role.queenBee || rand != 0;
+        isMale = !(a == Role.queenBee || rand != 0);
+        if (role != Character.Role.teacher) name = b;
+        else if (isMale) name = "Mr. " + b;
+        else name = "Mrs. " + b;
         
     }
     
@@ -256,6 +258,8 @@ public class Character {
         atkers.add(attacker);
         return !role.immuneTo(attacker.getRole());
     }
+    public Boolean hasFailed() {return failed;}
+    public void fail() {failed = true;}
     
     
 }
