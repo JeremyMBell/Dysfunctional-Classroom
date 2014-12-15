@@ -13,15 +13,14 @@ import org.newdawn.slick.util.ResourceLoader;
 import org.newdawn.slick.TrueTypeFont;
 import java.awt.Font;
 import java.awt.Point;
-import org.newdawn.slick.Color;
 public class Output extends BasicGame
 {
     private Classroom room;
     private Image BACKGROUND;
-    private Image[] pplSprite;
-    private Point[] pplLocation;
+    private OPerson[] people;
     private TrueTypeFont deflt;
     private final int BLOCK_SIZE = 150;
+    private Input chatTarget;
         
     public Output(String gamename)
     {
@@ -31,26 +30,36 @@ public class Output extends BasicGame
     @Override
     public void init(GameContainer gc) throws SlickException {
         BACKGROUND = toImage("src/images/background.gif");
+        chatTarget = new Input(gc);
+        chatTarget.setHeight(600);
+        chatTarget.setWidth(500);
+        chatTarget.setLocation(900, 0);
         Character[] classmates = room.classmates();
-        pplSprite = new Image[classmates.length];
-        pplLocation = new Point[classmates.length];
+        people = new OPerson[classmates.length];
+        //3 rows of students - 5 columns of students - 15 max students
         for (int i = 0; i < 3; i++) {
-            for (int i2 = 0; i2 < 5; i2++) {
+            for (int i2 = 0; i2 < 5 && i * 5 + i2 < classmates.length; i2++) {
+                Point curr;
+                
+                //The index in the array will be a combination of both indices
                 int i3 = i * 5 + i2;
-                if (i3 < classmates.length && classmates[i3].isMale())
-                    pplSprite[i3] = RoomObj.boy.image;
-                else if (i3 < classmates.length)
-                    pplSprite[i3] = RoomObj.girl.image;
-                if (i3 < classmates.length && classmates[i3].getRole() != Character.Role.teacher)
-                    pplLocation[i3] = new Point(i2 * (BLOCK_SIZE + 30), i * (BLOCK_SIZE));
-                else if (i3 < classmates.length)
-                    pplLocation[i3] = new Point (BLOCK_SIZE, gc.getHeight() - BLOCK_SIZE * 2 / 3);
+                
+                //If the classmate isn't a teacher - place them in normal seating
+                if (classmates[i3].getRole() != Character.Role.teacher)
+                    curr = new Point(i2 * (BLOCK_SIZE + 30), i * (BLOCK_SIZE));
+                
+                //Otherwise, the teacher gets a front desk
+                else
+                    curr = new Point (BLOCK_SIZE, gc.getHeight() - BLOCK_SIZE * 2 / 3);
+                
+                people[i3] = new OPerson(classmates[i3], curr, BLOCK_SIZE);
                 
             }
             
         }
         //gc.setShowFPS(false);
         deflt = new TrueTypeFont(new Font("Cambria", Font.PLAIN, 12), true);
+        chatTarget.init(gc);
         
     }
 
@@ -61,58 +70,44 @@ public class Output extends BasicGame
     public void render(GameContainer gc, Graphics g) throws SlickException
     {
         BACKGROUND.draw(0, 0);
-        g.setFont(deflt);
-        for (int i = 0; i < pplSprite.length; i++) {
-            int rectX = pplLocation[i].x + BLOCK_SIZE / 6;
-            int rectY = pplLocation[i].y + BLOCK_SIZE * 7 / 12;
-            if (room.classmates()[i].getRole() != Character.Role.teacher) {
-                RoomObj.desk.draw(pplLocation[i].x, pplLocation[i].y);
-                pplSprite[i].draw(pplLocation[i].x + BLOCK_SIZE / 3, pplLocation[i].y);
-            }
-            else {
-                RoomObj.teacherDesk.draw(pplLocation[i].x, pplLocation[i].y);
-                pplSprite[i].draw(pplLocation[i].x + 3 * BLOCK_SIZE, pplLocation[i].y);
-                rectY = pplLocation[i].y + BLOCK_SIZE / 6;
-            }
-            g.setColor(Color.white);
-            g.fillRect(rectX, rectY, BLOCK_SIZE * 2 / 3, BLOCK_SIZE / 3);
-            g.setColor(Color.black);
-            if (room.classmates()[i].hasFailed()) {
-                g.setColor(Color.red);
-                g.drawString(room.classmates()[i].getRole().toString(), rectX, rectY + 20);
-            }
-            g.drawString(room.classmates()[i].toString(), rectX, rectY);
-        }
+        g.setFont(deflt);//Cambria size 12
+        for(OPerson person:people)
+            person.draw(g);
+        chatTarget.render(gc, g);
             
         
     }
     public void setClassroom(Classroom clsrm) {room = clsrm;}
     /**
-     * Converts file location to BufferedImage class.
+     * Converts GIF image location to Image class.
      */
     public static Image toImage(String file) {
         try {
+            //Make a texture using the string and return an image based off
+            //the texture
             InputStream fileInput = ResourceLoader.getResourceAsStream(file);
-            System.out.println("Good input stream");
             Texture texture = TextureLoader.getTexture("GIF", fileInput);
-            System.out.println("Good texture");
             return toImage(texture);
         }
-        catch(Exception e){
+        catch(Exception e){//Tell us where it went wrong!
             System.out.println("Caught toImage(String)");
             e.printStackTrace();
             return null;
         }
     }
     public static Image toImage(Texture image) {
-        try{return new Image(image);}
-        catch(Exception e){
+        try{return new Image(image);}//Image() has an initializer for texture.
+        catch(Exception e){//Tell us where it went wrong!
             System.out.println("Caught toImage(Texture)");
             e.printStackTrace();
             return null;
         }
        
     }
+    /**
+     * RoomObj
+     * Gives images to use in the classroom that represent objects.
+     */
     public enum RoomObj {
         desk("images/desk.gif"),
         teacherDesk("images/teacher_desk.gif"),
@@ -122,6 +117,13 @@ public class Output extends BasicGame
         RoomObj(String a) {
             image = toImage(a);
         }
+        /**
+         * draw (int x, int y)
+         * x - x-coordinate to draw to
+         * y - y-cordinate to draw to
+         * 
+         * Draws the RoomObj image to the desired location.
+        */
         public void draw(int x, int y){image.draw(x, y);}
     }
 }

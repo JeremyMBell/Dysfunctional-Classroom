@@ -40,7 +40,7 @@ public class Classroom {
                 gui = new Output("Dysfunctional Classroom");
                 gui.setClassroom(this);
                 window = new AppGameContainer(gui);
-                window.setDisplayMode(900, 600, false);
+                window.setDisplayMode(1400, 600, false);
                 window.start();
         }
         catch (SlickException ex) {
