@@ -1,19 +1,16 @@
-package io;
-//ORIGINALLY BY SLICK2D AUTHORS, BUT EDITED FOR MY PURPOSES.
+package org.newdawn.slick.gui;
+
 import org.lwjgl.Sys;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.gui.AbstractComponent;
-import org.newdawn.slick.gui.GUIContext;
-import org.newdawn.slick.gui.ComponentListener;
 
 /**
  * A single text field supporting text entry
  * 
- * @author kevin, modified for use by Jerome
+ * @author kevin
  */
 public class TextField extends AbstractComponent {
 	/** The key repeat interval */
@@ -74,11 +71,6 @@ public class TextField extends AbstractComponent {
 	
 	/** True if events should be consumed by the field */
 	private boolean consume = true;
-        
-        /** Each frame that gives a remainder of less than 10 when divided
-         * by 20 will show a cursor, otherwise it is disappeared, causing a
-           blinking cursor.*/
-        private int frame = 0;
 	
 	/**
 	 * Create a new text field
@@ -248,32 +240,31 @@ public class TextField extends AbstractComponent {
 		Color clr = g.getColor();
 
 		if (background != null) {
-			g.setColor(background);
+			g.setColor(background.multiply(clr));
 			g.fillRect(x, y, width, height);
 		}
-		g.setColor(text);
+		g.setColor(text.multiply(clr));
 		Font temp = g.getFont();
 
 		int cpos = font.getWidth(value.substring(0, cursorPos));
 		int tx = 0;
 		if (cpos > width) {
-			tx = width - cpos - font.getWidth("|");
+			tx = width - cpos - font.getWidth("_");
 		}
 
 		g.translate(tx + 2, 0);
 		g.setFont(font);
 		g.drawString(value, x + 1, y + 1);
-                frame++;
-		if (hasFocus() && visibleCursor && frame % 20 <= 10) {
-			g.drawString("|", x + cpos - 3 , y + 1);
+
+		if (hasFocus() && visibleCursor) {
+			g.drawString("_", x + 1 + cpos + 2, y + 1);
 		}
 
 		g.translate(-tx - 2, 0);
 
 		if (border != null) {
-			g.setColor(border);
-			g.drawRect(x, y, width - 1, height - 1);
-                        g.drawRect(x + 1, y + 1, width - 2, height - 2);
+			g.setColor(border.multiply(clr));
+			g.drawRect(x, y, width, height);
 		}
 		g.setColor(clr);
 		g.setFont(temp);
@@ -289,6 +280,7 @@ public class TextField extends AbstractComponent {
 	public String getText() {
 		return value;
 	}
+
 	/**
 	 * Set the value to be displayed in the text field
 	 * 
