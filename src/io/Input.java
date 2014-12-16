@@ -7,7 +7,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.gui.TextField;
+//import org.newdawn.slick.gui.TextField;
 public class Input extends AbstractComponent {
     private static Scanner scan = new Scanner(System.in);
     private int width, height, x, y;
@@ -19,6 +19,7 @@ public class Input extends AbstractComponent {
     public int getWidth() {return width;}
     public int getX(){return x;}
     public int getY(){return y;}
+    public TextField getTextField(){return chatInput;}
     public void setLocation(int x, int y) {
         this.x = x;
         this.y = y;
@@ -27,11 +28,10 @@ public class Input extends AbstractComponent {
     public void setWidth(int l){width = l;}
     public void init(GUIContext gui) {
         int size = height / 25;
-        chatInput = new TextField(gui, new TrueTypeFont(new Font("Rockwell", Font.PLAIN, size - 5), true), 0, height - size, width, size);
+        chatInput = new TextField(gui, new TrueTypeFont(new Font("Rockwell", Font.PLAIN, size - 5), true), x, height - size, width, size);
         System.out.println("Y: " + y + "\nHeight: " + height);
         chatInput.setBackgroundColor(Color.decode("#6DB087"));
         chatInput.setBorderColor(Color.decode("#3A3B3A"));
-        chatInput.setText("hi");
     }
     public void render(GUIContext gui, Graphics g){
         chatInput.render(gui, g);
@@ -40,6 +40,11 @@ public class Input extends AbstractComponent {
         System.out.print("Who do you want to target? ");
         
         return scan.nextInt();
+    }
+    public void mousePressed(int button, int x, int y) {
+        if (x >= chatInput.x && x <= x + chatInput.getWidth() && y <= height && y >= height - chatInput.getHeight())
+            chatInput.setFocus(true);
+        
     }
     
 }
