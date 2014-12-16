@@ -13,6 +13,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import org.newdawn.slick.TrueTypeFont;
 import java.awt.Font;
 import java.awt.Point;
+import org.newdawn.slick.gui.TextField;
 public class Output extends BasicGame
 {
     private Classroom room;
@@ -60,6 +61,8 @@ public class Output extends BasicGame
         //gc.setShowFPS(false);
         deflt = new TrueTypeFont(new Font("Cambria", Font.PLAIN, 12), true);
         chatTarget.init(gc);
+        chatTarget.setWidth(gc.getWidth() - BACKGROUND.getWidth());
+        chatTarget.setLocation(BACKGROUND.getWidth(), BACKGROUND.getHeight() - 40);
         
     }
 
@@ -74,7 +77,6 @@ public class Output extends BasicGame
         for(OPerson person:people)
             person.draw(g);
         chatTarget.render(gc, g);
-            
         
     }
     public void setClassroom(Classroom clsrm) {room = clsrm;}
