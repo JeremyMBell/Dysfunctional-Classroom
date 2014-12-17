@@ -1,5 +1,6 @@
 package io;
 //ORIGINALLY BY SLICK2D AUTHORS, BUT EDITED FOR MY PURPOSES.
+import java.util.LinkedList;
 import org.lwjgl.Sys;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
@@ -79,6 +80,20 @@ public class TextField extends AbstractComponent {
          * by 20 will show a cursor, otherwise it is disappeared, causing a
            blinking cursor.*/
         private int frame = 0;
+        
+        /* Value used for when the user decides to post to a class. */
+        private String savedValue = "";
+        
+        /** Value used to tell if the programmer wants to have perpetual focus on this text */
+        private Boolean alwaysFocus = false;
+        
+        /** Value used to tell if the programmer wants multiLine and \n support. */
+        private Boolean multiLine = false;
+        
+        /** Lines if there is a multiline. */
+        private LinkedList<String> lines = new LinkedList<>();
+        
+        private int scrollbarIndex = 0;
 	
 	/**
 	 * Create a new text field
@@ -195,6 +210,16 @@ public class TextField extends AbstractComponent {
 	public int getHeight() {
 		return height;
 	}
+        /**
+         * Gets what was entered in the textbox and someone hit enter.
+         * The value disappears when this method is called.
+         * @return A value previously entered in the textbox.
+         */
+        public String getEntered() {
+            String entered = savedValue;
+            savedValue = "";
+            return entered;
+        }
 
 	/**
 	 * Set the background color. Set to null to disable the background
@@ -231,6 +256,7 @@ public class TextField extends AbstractComponent {
 	 *      org.newdawn.slick.Graphics)
 	 */
 	public void render(GUIContext container, Graphics g) {
+                if (alwaysFocus && !hasFocus()) setFocus(true);
 		if (lastKey != -1) {
 			if (input.isKeyDown(lastKey)) {
 				if (repeatTimer < System.currentTimeMillis()) {
@@ -262,7 +288,22 @@ public class TextField extends AbstractComponent {
 
 		g.translate(tx + 2, 0);
 		g.setFont(font);
-		g.drawString(value, x + 1, y + 1);
+                if (multiLine) {
+                    for(int i = scrollbarIndex; i < lines.size() && lines.size() > 0 && i - scrollbarIndex < height / font.getHeight("|"); i++)
+                        g.drawString(lines.get(i), x + 1, y + (i - scrollbarIndex) * font.getHeight("|"));
+                    
+                    
+                    g.setColor(Color.lightGray);
+                    g.fillRect(x + width - 20, y, 20, height);
+                    if (lines.size() > 0 && lines.size() - height / font.getHeight("|") > 0) {
+                        g.setColor(Color.darkGray);
+                        g.fillRect(x + width - 20, y + (scrollbarIndex * (height / lines.size())), 20, height / (lines.size() - height / font.getHeight("|")));
+                    }
+                    g.setColor(Color.blue);
+                    g.drawString("/\\", x + width - 20, y);
+                    g.drawString("\\/", x + width - 20, y + height - font.getHeight("|"));
+                }
+                else g.drawString(value, x + 1, y + 1);
                 frame++;
 		if (hasFocus() && visibleCursor && frame % 20 <= 10) {
 			g.drawString("|", x + cpos - 3 , y + 1);
@@ -296,7 +337,10 @@ public class TextField extends AbstractComponent {
 	 *            The value to be displayed in the text field
 	 */
 	public void setText(String value) {
-		this.value = value;
+                if (multiLine) {
+                    lines.add(value);
+                }
+                else this.value = value;
 		if (cursorPos > value.length()) {
 			cursorPos = value.length();
 		}
@@ -463,15 +507,32 @@ public class TextField extends AbstractComponent {
 					container.getInput().consumeEvent();
 				}
 			} else if (key == Input.KEY_RETURN) {
+                                savedValue = value;
+                                value = "";
+                                cursorPos = 0;
+                                
 				notifyListeners();
 				// Nobody more will be notified
 				if (consume) {
 					container.getInput().consumeEvent();
 				}
 			}
+                            
 
 		}
 	}
+        public void setAlwaysFocused(Boolean focus) {
+            alwaysFocus = focus;
+        }
+        
+        /**
+         * Will draw text in multiple lines.
+         *@param multiLine
+         *              Boolean stating if multiple lines will be used.
+         */
+        public void setMultiLine(boolean multiLine) {
+            this.multiLine = multiLine;
+        }
 
 	/**
 	 * @see org.newdawn.slick.gui.AbstractComponent#setFocus(boolean)
@@ -481,4 +542,22 @@ public class TextField extends AbstractComponent {
 		
 		super.setFocus(focus);
 	}
+        public void mouseReleased(int button, int x, int y) {
+            
+            //If scrollbar situation...
+            if (multiLine && button == 0 && this.x + width - 20 <= x && this.x + width >= x && y >= this.y && y <= this.y + height) {
+                if (y <= this.y + font.getHeight("|")){
+                    if(scrollbarIndex > 0)
+                        scrollbarIndex--;
+                }
+                else if (y >= this.y + height - font.getHeight("|")){
+                    if(scrollbarIndex < lines.size() - 1)
+                        scrollbarIndex++;
+                }
+                else if (lines.size() > 0){
+                    scrollbarIndex = (y - this.y) / (height / lines.size());
+                }
+                
+            }
+        }
 }

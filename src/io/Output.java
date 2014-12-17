@@ -60,14 +60,16 @@ public class Output extends BasicGame
         }
         //gc.setShowFPS(false);
         deflt = new TrueTypeFont(new Font("Cambria", Font.PLAIN, 12), true);
-        chatTarget.init(gc);
+        chatTarget.init(gc, room);
         chatTarget.setWidth(gc.getWidth() - BACKGROUND.getWidth());
         chatTarget.setLocation(BACKGROUND.getWidth(), BACKGROUND.getHeight() - 40);
         
     }
 
     @Override
-    public void update(GameContainer gc, int i) throws SlickException {}
+    public void update(GameContainer gc, int i) throws SlickException {
+        chatTarget.update(gc, i);
+    }
 
     @Override
     public void render(GameContainer gc, Graphics g) throws SlickException
