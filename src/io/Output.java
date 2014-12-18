@@ -30,6 +30,7 @@ public class Output extends BasicGame
 
     @Override
     public void init(GameContainer gc) throws SlickException {
+        gc.setTargetFrameRate(30);
         BACKGROUND = toImage("src/images/background.gif");
         chatTarget = new Input(gc);
         chatTarget.setHeight(600);
