@@ -1,36 +1,36 @@
 package dysfunctionalclassroom;
-import frame.Classroom;
-import frame.Character;
+import frame.Lobby;
+import frame.Player;
 import io.Input;
 import java.util.LinkedList;
 public class Test {
-    Classroom classmates;
-    LinkedList<Character> testAbltClassmates = new LinkedList<>();
-    public Test(Classroom a) {
+    Lobby classmates;
+    LinkedList<Player> testAbltClassmates = new LinkedList<>();
+    public Test(Lobby a) {
         classmates = a;
-        Character[] people = a.classmates();
+        Player[] people = a.classmates();
         
         //Priority of people
-        Character.Ability[] order = {Character.Ability.distract, Character.Ability.beatUp,
-                       Character.Ability.charm, Character.Ability.report, 
-                       Character.Ability.fail, Character.Ability.scare,
-                       Character.Ability.swap, Character.Ability.tattle};
-        for (Character.Ability curr:order)
-            for (Character person: people)
-                for (Character.Ability ablt: person.getAbilities())
+        Player.Ability[] order = {Player.Ability.distract, Player.Ability.beatUp,
+                       Player.Ability.charm, Player.Ability.report, 
+                       Player.Ability.fail, Player.Ability.scare,
+                       Player.Ability.swap, Player.Ability.tattle};
+        for (Player.Ability curr:order)
+            for (Player person: people)
+                for (Player.Ability ablt: person.getAbilities())
                     if (ablt == curr)
                         testAbltClassmates.add(person);
         
     }
-    public LinkedList<Character> runTest() {
-        LinkedList<Character> failed = new LinkedList<>();
-        for (Character testPerson: testAbltClassmates){
+    public LinkedList<Player> runTest() {
+        LinkedList<Player> failed = new LinkedList<>();
+        for (Player testPerson: testAbltClassmates){
             System.out.println("\n" + testPerson + ":" + testPerson.getRole());
             Boolean targetSuccess = testPerson.target(classmates.classmates()[Input.receiveInput()]);
             if(testPerson.getRole().transferRole() && targetSuccess)
                 failed.add(testPerson);
         }
-        for (Character failedKid:failed)
+        for (Player failedKid:failed)
             System.out.println(failedKid + " transferred since the last test.");
         return failed;
         

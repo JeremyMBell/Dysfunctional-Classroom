@@ -1,6 +1,6 @@
 package io;
 
-import frame.Classroom;
+import frame.Lobby;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -88,7 +88,7 @@ public class Initializer {
                     plyrNames[i] = playerNames.get(i).getText();
             parent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             parent.dispatchEvent(new WindowEvent(parent, WindowEvent.WINDOW_CLOSING));
-            Classroom clsr = new Classroom(plyrNames, modes.Default.getRoles());
+            Lobby clsr = new Lobby(plyrNames, modes.Default.getRoles());
             
         }
     }

@@ -3,22 +3,22 @@ package io;
 import java.awt.Point;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.Graphics;
-import frame.Character;
+import frame.Player;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 
 public class OPerson {
     private final Point coordinates;
-    private final Character person;
+    private final Player person;
     private final int blockSize;
     private Image[] sprite;
-    public OPerson(Character rep, Point location, int size) {
+    public OPerson(Player rep, Point location, int size) {
         coordinates = location;
         person = rep;
         blockSize = size;
         try {
             SpriteSheet studentDesk = new SpriteSheet("src/images/desksheet.png", size, size);
-            if (rep.getRole() == Character.Role.teacher) {//Adding the teacher's desk
+            if (rep.getRole() == Player.Role.teacher) {//Adding the teacher's desk
                 sprite = new Image[3];
                 sprite[0] = studentDesk.getSprite(2, 0);
                 sprite[1] = studentDesk.getSprite(3, 0);
@@ -40,7 +40,7 @@ public class OPerson {
             e.printStackTrace();//Tell me what's wrong!
             
             //If statements point to the same as above.
-            if (rep.getRole() == Character.Role.teacher) {
+            if (rep.getRole() == Player.Role.teacher) {
                 sprite = new Image[3];
                 sprite[0] = Output.toImage("src/images/teacher_desk_left.gif");
                 sprite[1] = Output.toImage("src/images/teacher_desk_right.gif");
@@ -68,11 +68,11 @@ public class OPerson {
         else g.setColor(Color.black);
         
         //Adding the name and role if it failed (other than teacher)
-        if (person.getRole() == Character.Role.teacher)//Teacher has different positioning for drawing names
+        if (person.getRole() == Player.Role.teacher)//Teacher has different positioning for drawing names
             g.drawString(person.toString(), coordinates.x + 5 * blockSize / 32, coordinates.y + blockSize / 8);
         else if (person.hasFailed())//Adding role if a nonteacher transferred
             g.drawString(person.getRole().toString(), coordinates.x + 5 * blockSize / 32, coordinates.y + 3 * blockSize / 4);
-        if (person.getRole() != Character.Role.teacher)
+        if (person.getRole() != Player.Role.teacher)
             g.drawString(person.toString(), coordinates.x + 5 * blockSize / 32, coordinates.y + 5 * blockSize / 8);
         
     }

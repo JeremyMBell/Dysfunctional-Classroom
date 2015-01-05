@@ -3,8 +3,8 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import frame.Classroom;
-import frame.Character;
+import frame.Lobby;
+import frame.Player;
 import java.io.InputStream;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.opengl.Texture;
@@ -16,7 +16,7 @@ import java.awt.Point;
 import org.newdawn.slick.gui.TextField;
 public class Output extends BasicGame
 {
-    private Classroom room;
+    private Lobby room;
     private Image BACKGROUND;
     private OPerson[] people;
     private TrueTypeFont deflt;
@@ -36,7 +36,7 @@ public class Output extends BasicGame
         chatTarget.setHeight(600);
         chatTarget.setWidth(500);
         chatTarget.setLocation(900, 0);
-        Character[] classmates = room.classmates();
+        Player[] classmates = room.classmates();
         people = new OPerson[classmates.length];
         //3 rows of students - 5 columns of students - 15 max students
         for (int i = 0; i < 3; i++) {
@@ -47,7 +47,7 @@ public class Output extends BasicGame
                 int i3 = i * 5 + i2;
                 
                 //If the classmate isn't a teacher - place them in normal seating
-                if (classmates[i3].getRole() != Character.Role.teacher)
+                if (classmates[i3].getRole() != Player.Role.teacher)
                     curr = new Point(i2 * (BLOCK_SIZE + 30), i * (BLOCK_SIZE));
                 
                 //Otherwise, the teacher gets a front desk
@@ -82,7 +82,7 @@ public class Output extends BasicGame
         chatTarget.render(gc, g);
         
     }
-    public void setClassroom(Classroom clsrm) {room = clsrm;}
+    public void setClassroom(Lobby clsrm) {room = clsrm;}
     /**
      * Converts GIF image location to Image class.
      */

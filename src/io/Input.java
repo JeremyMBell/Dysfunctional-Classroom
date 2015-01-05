@@ -1,5 +1,5 @@
 package io;
-import frame.Classroom;
+import frame.Lobby;
 import java.awt.Font;
 import java.util.Scanner;
 import org.newdawn.slick.gui.AbstractComponent;
@@ -15,7 +15,7 @@ public class Input extends AbstractComponent {
     private int width, height, x, y;
     private TextField chatInput, chatOutput;
     private ComboBox target;
-    private Classroom room;
+    private Lobby room;
     String selectedTarget = null;
     public Input(GameContainer gc) {
         super(gc);
@@ -36,7 +36,7 @@ public class Input extends AbstractComponent {
     }
     public void setHeight(int l){height = l;}
     public void setWidth(int l){width = l;}
-    public void init(GUIContext gui, Classroom clsrm) {
+    public void init(GUIContext gui, Lobby clsrm) {
         int size = height / 25;
         TrueTypeFont rockwell = new TrueTypeFont(new Font("Rockwell", Font.PLAIN, size - 5), true);
         TrueTypeFont smallRockwell = new TrueTypeFont(new Font("Rockwell", Font.PLAIN, height / 40), true); 
@@ -55,7 +55,7 @@ public class Input extends AbstractComponent {
         target.setBackgroundColor(Color.decode("#3A3B3A"));
         target.setTextColor(Color.white);
         
-        for(frame.Character person: room.classmates())
+        for(frame.Player person: room.classmates())
             target.addItem(person.toString());
         
     }
