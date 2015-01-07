@@ -21,7 +21,7 @@ public class Output extends BasicGame
     private OPerson[] people;
     private TrueTypeFont deflt;
     private final int BLOCK_SIZE = 150;
-    private Input chatTarget;
+    private Input userPanel;
         
     public Output(String gamename)
     {
@@ -31,45 +31,20 @@ public class Output extends BasicGame
     @Override
     public void init(GameContainer gc) throws SlickException {
         gc.setTargetFrameRate(30);
-        BACKGROUND = toImage("src/images/background.gif");
-        chatTarget = new Input(gc);
-        chatTarget.setHeight(600);
-        chatTarget.setWidth(500);
-        chatTarget.setLocation(900, 0);
-        Player[] classmates = room.classmates();
-        people = new OPerson[classmates.length];
-        //3 rows of students - 5 columns of students - 15 max students
-        for (int i = 0; i < 3; i++) {
-            for (int i2 = 0; i2 < 5 && i * 5 + i2 < classmates.length; i2++) {
-                Point curr;
-                
-                //The index in the array will be a combination of both indices
-                int i3 = i * 5 + i2;
-                
-                //If the classmate isn't a teacher - place them in normal seating
-                if (classmates[i3].getRole() != Player.Role.teacher)
-                    curr = new Point(i2 * (BLOCK_SIZE + 30), i * (BLOCK_SIZE));
-                
-                //Otherwise, the teacher gets a front desk
-                else
-                    curr = new Point (BLOCK_SIZE, gc.getHeight() - BLOCK_SIZE * 2 / 3);
-                
-                people[i3] = new OPerson(classmates[i3], curr, BLOCK_SIZE);
-                
-            }
-            
-        }
-        //gc.setShowFPS(false);
+        userPanel = new Input(gc);
+        userPanel.setHeight(gc.getHeight());
+        userPanel.setWidth(gc.getWidth() / 3);
+        userPanel.setLocation(gc.getWidth() - gc.getWidth() / 3, 0);
         deflt = new TrueTypeFont(new Font("Cambria", Font.PLAIN, 12), true);
-        chatTarget.init(gc, room);
-        chatTarget.setWidth(gc.getWidth() - BACKGROUND.getWidth());
-        chatTarget.setLocation(BACKGROUND.getWidth(), BACKGROUND.getHeight() - 40);
+        userPanel.init(gc, room);
+        userPanel.setWidth(gc.getWidth() - BACKGROUND.getWidth());
+        userPanel.setLocation(BACKGROUND.getWidth(), BACKGROUND.getHeight() - 40);
         
     }
 
     @Override
     public void update(GameContainer gc, int i) throws SlickException {
-        chatTarget.update(gc, i);
+        userPanel.update(gc, i);
     }
 
     @Override
@@ -79,7 +54,7 @@ public class Output extends BasicGame
         g.setFont(deflt);//Cambria size 12
         for(OPerson person:people)
             person.draw(g);
-        chatTarget.render(gc, g);
+        userPanel.render(gc, g);
         
     }
     public void setClassroom(Lobby clsrm) {room = clsrm;}

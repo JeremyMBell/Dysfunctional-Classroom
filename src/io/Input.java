@@ -55,8 +55,6 @@ public class Input extends AbstractComponent {
         target.setBackgroundColor(Color.decode("#3A3B3A"));
         target.setTextColor(Color.white);
         
-        for(frame.Player person: room.classmates())
-            target.addItem(person.toString());
         
     }
     

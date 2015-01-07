@@ -88,7 +88,7 @@ public class Initializer {
                     plyrNames[i] = playerNames.get(i).getText();
             parent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             parent.dispatchEvent(new WindowEvent(parent, WindowEvent.WINDOW_CLOSING));
-            Lobby clsr = new Lobby(plyrNames, modes.Default.getRoles());
+            Output game = new Output("My Game");
             
         }
     }
