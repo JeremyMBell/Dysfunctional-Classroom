@@ -1,6 +1,7 @@
 package io;
 
-import frame.Lobby;
+import frame.Card;
+import frame.Deck;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -10,24 +11,27 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.SlickException;
 public class Initializer {
-    private JFrame parent = new JFrame("DC Initializer");
-    private JPanel container = new JPanel(), playerCount = new JPanel(),names = new JPanel();
-    private JTextField numNames = new JTextField();
-    private JButton go = new JButton("Go"), submit = new JButton("Submit");
-    private JLabel numPlayers = new JLabel("# of Players: ");
-    private final ArrayList<JTextField> playerNames = new ArrayList<>();
+    private final JFrame parent = new JFrame("DC Initializer");
+    private final JPanel container = new JPanel(), playerCount = new JPanel(),names = new JPanel();
+    private final JTextField numNames = new JTextField();
+    private final JButton addPack = new JButton("Go"), submit = new JButton("Submit");
+    private final JLabel numPlyrs = new JLabel("# of Players: ");
+    private final JComboBox numPlayers = new JComboBox();
+    private final Deck gameDeck = new Deck(new Card[0], new Card[0]);
     int num = 0;
     public Initializer(int x, int y, int width, int height) {
         numNames.setPreferredSize(new Dimension(width / 3, 18));
-        go.addActionListener(new PlayerCount());
+        addPack.addActionListener(new AddPack());
         submit.addActionListener(new Submit());
         playerCount.add(numPlayers);
         playerCount.add(numNames);
-        playerCount.add(go);
+        playerCount.add(addPack);
         parent.setLocation(new Point(x, y));
         parent.setPreferredSize(new Dimension(width, height));
         names.setLayout(new BoxLayout(names, BoxLayout.Y_AXIS));
@@ -43,52 +47,29 @@ public class Initializer {
         parent.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
     }
-    public class PlayerCount implements ActionListener {
+    public class AddPack implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent a) {
-            names.removeAll();
-            try {
-                num = Integer.decode(numNames.getText());
-                int difference = playerNames.size() - num;
-                if (num <= 15 && num >= 1) {
-                    if (difference < 0)
-                        for (int i = 0; i < difference * -1; i++)
-                            playerNames.add(new JTextField());
-                    else if (difference > 0)
-                        for (int i = 0; i < difference; i++)
-                            playerNames.remove(playerNames.size() - 1);
-                    for (JTextField player: playerNames) {
-                        JPanel name = new JPanel();
-                        player.setPreferredSize(numNames.getPreferredSize());
-                        name.add(new JLabel("Player Name: "));
-                        name.add(player);
-                        names.add(name);
-                    }
-                } else throw new StringIndexOutOfBoundsException("Bad number value.");
-                
-            }
-            catch (NumberFormatException e){
-                names.add(new JLabel("Please enter a comprehensible integer."));
-            }
-            catch (StringIndexOutOfBoundsException e) {
-                names.add(new JLabel(e.getMessage()));
-                names.add(new JLabel("Please enter an integer between 1 and 15"));
-                
-            }
-            parent.revalidate();
+            
         }
         
     }
     public class Submit implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent a) {
-            String[] plyrNames = new String[playerNames.size()];
-            for (int i = 0; i < playerNames.size(); i++)
-                if (playerNames.get(i).getText().length() > 0)
-                    plyrNames[i] = playerNames.get(i).getText();
+            
             parent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             parent.dispatchEvent(new WindowEvent(parent, WindowEvent.WINDOW_CLOSING));
-            Output game = new Output("My Game");
+            try {
+                AppGameContainer myGame = new AppGameContainer(new Output("Dysfunctional Classroom"));
+                myGame.setDisplayMode(1000, 600, false);
+                myGame.start();
+            }
+            catch (SlickException e) {
+                e.printStackTrace();
+                System.out.println("Game launch failed.");
+            }
+            
             
         }
     }

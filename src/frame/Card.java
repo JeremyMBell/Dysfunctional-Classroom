@@ -17,4 +17,11 @@ public class Card {
         text = a.substring(cardsPlay);
     }
     
+    @Override
+    public String toString() {return text;}
+    
+    public short numCardsNeeded() {return cardsPlay;}
+    
+    public boolean isBlack() {return isBlack;}
+    
 }

@@ -17,7 +17,6 @@ import org.newdawn.slick.gui.TextField;
 public class Output extends BasicGame
 {
     private Lobby room;
-    private Image BACKGROUND;
     private OPerson[] people;
     private TrueTypeFont deflt;
     private final int BLOCK_SIZE = 150;
@@ -37,8 +36,7 @@ public class Output extends BasicGame
         userPanel.setLocation(gc.getWidth() - gc.getWidth() / 3, 0);
         deflt = new TrueTypeFont(new Font("Cambria", Font.PLAIN, 12), true);
         userPanel.init(gc, room);
-        userPanel.setWidth(gc.getWidth() - BACKGROUND.getWidth());
-        userPanel.setLocation(BACKGROUND.getWidth(), BACKGROUND.getHeight() - 40);
+        people = new OPerson[0];
         
     }
 
@@ -50,7 +48,6 @@ public class Output extends BasicGame
     @Override
     public void render(GameContainer gc, Graphics g) throws SlickException
     {
-        BACKGROUND.draw(0, 0);
         g.setFont(deflt);//Cambria size 12
         for(OPerson person:people)
             person.draw(g);
