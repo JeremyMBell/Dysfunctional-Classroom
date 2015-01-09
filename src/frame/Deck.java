@@ -63,22 +63,23 @@ public class Deck {
         return whiteCards.toArray(new Card[whiteCards.size()]);
     }
     
+    /**
+     * Shuffles the deck in.
+     * @param deck The deck to be added and shuffled.
+     */
     public void joinDeck(Deck deck) {
-        
+        for (Card blackCard:deck.getBlackCards())
+            blackCards.add(blackCard);
+        for (Card whiteCard:deck.getWhiteCards())
+            whiteCards.add(whiteCard);
+        shuffle();
     }
     
     public void shuffle() {
-        Card[] whites = whiteCards.toArray(new Card[whiteCards.size()]);
         Card[] blacks = blackCards.toArray(new Card[whiteCards.size()]);
+        Card[] whites = whiteCards.toArray(new Card[whiteCards.size()]);
         
-        //Randomly switches two cards
-        for(int i = 0; i < whites.length / 2; i++) {
-            int i1 = (int) Math.floor(Math.random() * whites.length);
-            int i2 = (int) Math.floor(Math.random() * whites.length);
-            Card temp = whites[i1];
-            whites[i1] = whites[i2];
-            whites[i2] = temp;
-        }
+        //Randomly switches two cards each iteration
         for (int i = 0; i < blacks.length / 2; i++) {
             int i1 = (int) Math.floor(Math.random() * whites.length);
             int i2 = (int) Math.floor(Math.random() * whites.length);
@@ -87,6 +88,16 @@ public class Deck {
             blacks[i2] = temp;
         }
         
+        //Same as above
+        for(int i = 0; i < whites.length / 2; i++) {
+            int i1 = (int) Math.floor(Math.random() * whites.length);
+            int i2 = (int) Math.floor(Math.random() * whites.length);
+            Card temp = whites[i1];
+            whites[i1] = whites[i2];
+            whites[i2] = temp;
+        }
+        blackCards = new LinkedList(Arrays.asList(blacks));
+        whiteCards = new LinkedList(Arrays.asList(whites));
     }
     /**
      * Loads a deck based on a directory.

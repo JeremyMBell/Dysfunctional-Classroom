@@ -5,6 +5,7 @@ public class Player {
     static final int MAX_CARDS = 10;//Capacity of a Hand
     private final Card[] hand = new Card[MAX_CARDS];//Hand of Cards to Play
     private int handSize = 0;//How Many Cards are In Hand
+    private boolean isCardCzar = false;
     public Player(String a) {
         name = a;
     }
@@ -60,9 +61,12 @@ public class Player {
      * 
      */
     @Override
-    public String toString() {
-        return name;
-    }
+    public String toString() {return name;}
+    
+    /**
+     * Toggles whether or not the player is the Card Czar.
+     */
+    public void toggleCardCzar() {isCardCzar = !isCardCzar;}
     
     
     

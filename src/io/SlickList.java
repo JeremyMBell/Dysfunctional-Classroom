@@ -7,13 +7,13 @@ import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.gui.ComponentListener;
 
-public class ComboBox extends AbstractComponent {
+public class SlickList extends AbstractComponent {
     private int height, width, x, y;
     private Font font;
     private String[] items;
     private Color background, text;
     private int selectedIndex = -1;
-    public ComboBox(GUIContext container, Font font, int x, int y, int width,
+    public SlickList(GUIContext container, Font font, int x, int y, int width,
                     int height, String[] items) {
         super(container);
         this.x = x;
@@ -26,7 +26,7 @@ public class ComboBox extends AbstractComponent {
         text = Color.black;
         
     }
-    public ComboBox(GUIContext container, Font font, int x, int y, int width,
+    public SlickList(GUIContext container, Font font, int x, int y, int width,
                     int height) {
         this(container, font, x, y, width, height, new String[0]);
         
@@ -93,7 +93,7 @@ public class ComboBox extends AbstractComponent {
     }
     /**
      * Retrieves the item the combobox selected
-     * @return The selected item in the ComboBox. Returns null if nothing is selected.
+     * @return The selected item in the SlickList. Returns null if nothing is selected.
      */
     public String getSelectedItem() {
         if (selectedIndex >= 0 &&  selectedIndex < items.length)
@@ -101,7 +101,7 @@ public class ComboBox extends AbstractComponent {
         return null;
     }
     /**
-     * Sets the index of the item in the ComboBox
+     * Sets the index of the item in the SlickList
      * @param i - the index to be selected.
      */
     public void setSelectedItem(int i) {
@@ -125,25 +125,11 @@ public class ComboBox extends AbstractComponent {
         g.setColor(text);
         if (selectedIndex < items.length && selectedIndex >= 0)
             g.fillRect(x, selectedY, width, lineHeight);
-        for (int i = 0; i < items.length; i++) {
-            if (i == selectedIndex) {
-                g.setColor(background);
-                g.drawString(i + ".) " + items[i], x + width / 10, y + i * lineHeight);
-                g.setColor(text);
-            }
-            else g.drawString(i + ".) " + items[i], x + width / 10, y + i * lineHeight);
-        }
+        for (int i = 0; i < items.length; i++)
+            g.drawString(i + ".) " + items[i], x + width / 10, y + i * lineHeight);
+        
         
         g.setColor(tempColor);
-    }
-    public void mousePressed(int button, int x, int y) {
-        if (button == 0 && x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height) {
-            int temp = selectedIndex;
-            selectedIndex = (y - this.y) / font.getHeight("|");
-            if (temp == selectedIndex)
-                selectedIndex = -1;
-        }
-        
     }
     
 }

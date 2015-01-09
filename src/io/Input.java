@@ -14,7 +14,7 @@ public class Input extends AbstractComponent {
     private static Scanner scan = new Scanner(System.in);
     private int width, height, x, y;
     private TextField chatInput, chatOutput;
-    private ComboBox target;
+    private SlickList target;
     private Lobby room;
     String selectedTarget = null;
     public Input(GameContainer gc) {
@@ -51,7 +51,7 @@ public class Input extends AbstractComponent {
         chatOutput.setBorderColor(Color.decode("#3A3B3A"));
         chatOutput.setMultiLine(true);
         room = clsrm;
-        target = new ComboBox(gui, smallRockwell, x, y, width / 2, height / 2);
+        target = new SlickList(gui, smallRockwell, x, y, width / 2, height / 2);
         target.setBackgroundColor(Color.decode("#3A3B3A"));
         target.setTextColor(Color.white);
         
