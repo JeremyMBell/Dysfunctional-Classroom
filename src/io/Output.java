@@ -4,22 +4,16 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import frame.Lobby;
-import frame.Player;
 import java.io.InputStream;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
-import org.newdawn.slick.TrueTypeFont;
 import java.awt.Font;
-import java.awt.Point;
-import org.newdawn.slick.gui.TextField;
 public class Output extends BasicGame
 {
     private Lobby room;
-    private OPerson[] people;
-    private TrueTypeFont deflt;
-    private final int BLOCK_SIZE = 150;
+    public static final MutableFont deflt = new MutableFont(new Font("Cambria", Font.PLAIN, 20), true);
     private Input userPanel;
         
     public Output(String gamename)
@@ -34,9 +28,7 @@ public class Output extends BasicGame
         userPanel.setHeight(gc.getHeight());
         userPanel.setWidth(gc.getWidth() / 3);
         userPanel.setLocation(gc.getWidth() - gc.getWidth() / 3, 0);
-        deflt = new TrueTypeFont(new Font("Cambria", Font.PLAIN, 12), true);
         userPanel.init(gc, room);
-        people = new OPerson[0];
         
     }
 
@@ -49,8 +41,6 @@ public class Output extends BasicGame
     public void render(GameContainer gc, Graphics g) throws SlickException
     {
         g.setFont(deflt);//Cambria size 12
-        for(OPerson person:people)
-            person.draw(g);
         userPanel.render(gc, g);
         
     }
@@ -80,27 +70,5 @@ public class Output extends BasicGame
             return null;
         }
        
-    }
-    /**
-     * RoomObj
-     * Gives images to use in the classroom that represent objects.
-     */
-    public enum RoomObj {
-        desk("images/desk.gif"),
-        teacherDesk("images/teacher_desk.gif"),
-        boy("images/male.gif"),
-        girl ("images/female.gif");
-        Image image;
-        RoomObj(String a) {
-            image = toImage(a);
-        }
-        /**
-         * draw (int x, int y)
-         * x - x-coordinate to draw to
-         * y - y-cordinate to draw to
-         * 
-         * Draws the RoomObj image to the desired location.
-        */
-        public void draw(int x, int y){image.draw(x, y);}
     }
 }
