@@ -1,11 +1,17 @@
 package frame;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+
 public class Player {
     private final String name;//Name of Person
     static final int MAX_CARDS = 10;//Capacity of a Hand
     private final Card[] hand = new Card[MAX_CARDS];//Hand of Cards to Play
     private int handSize = 0;//How Many Cards are In Hand
     private boolean isCardCzar = false;
+    private Socket connection;
+    private PrintWriter output;
     public Player(String a) {
         name = a;
     }
@@ -67,6 +73,27 @@ public class Player {
      * Toggles whether or not the player is the Card Czar.
      */
     public void toggleCardCzar() {isCardCzar = !isCardCzar;}
+    
+    public void join(Lobby lob) {
+        try {
+            lob.join(this);
+        }
+        catch(IOException e) {
+            System.out.println("Player connection failed.");
+        }
+    }
+    public void setSocket(Socket newSocket) {
+        try {
+        connection = newSocket;
+        output = new PrintWriter(connection.getOutputStream(), true);
+        }
+        catch (IOException e) {
+            System.out.println("Set socket failed.");
+        }
+    }
+    public PrintWriter getOutput() {
+        return output;
+    }
     
     
     

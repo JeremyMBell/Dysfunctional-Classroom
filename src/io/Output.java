@@ -24,7 +24,7 @@ public class Output extends BasicGame
     @Override
     public void init(GameContainer gc) throws SlickException {
         gc.setTargetFrameRate(30);
-        publicViewing = new SlickInteractivePanel(gc,);
+        //publicViewing = new SlickInteractivePanel(gc,);
         
     }
 
@@ -36,7 +36,6 @@ public class Output extends BasicGame
     public void render(GameContainer gc, Graphics g) throws SlickException
     {
         g.setFont(deflt);//Cambria size 12
-        userPanel.render(gc, g);
         
     }
     public void setClassroom(Lobby clsrm) {room = clsrm;}
