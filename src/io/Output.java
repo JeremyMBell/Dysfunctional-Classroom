@@ -14,7 +14,7 @@ public class Output extends BasicGame
 {
     private Lobby room;
     public static final MutableFont deflt = new MutableFont(new Font("Cambria", Font.PLAIN, 20), true);
-    private Input userPanel;
+    private SlickInteractivePanel publicViewing, privateViewing;
         
     public Output(String gamename)
     {
@@ -24,17 +24,12 @@ public class Output extends BasicGame
     @Override
     public void init(GameContainer gc) throws SlickException {
         gc.setTargetFrameRate(30);
-        userPanel = new Input(gc);
-        userPanel.setHeight(gc.getHeight());
-        userPanel.setWidth(gc.getWidth() / 3);
-        userPanel.setLocation(gc.getWidth() - gc.getWidth() / 3, 0);
-        userPanel.init(gc, room);
+        publicViewing = new SlickInteractivePanel(gc,);
         
     }
 
     @Override
     public void update(GameContainer gc, int i) throws SlickException {
-        userPanel.update(gc, i);
     }
 
     @Override
