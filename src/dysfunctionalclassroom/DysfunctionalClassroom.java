@@ -1,5 +1,7 @@
 package dysfunctionalclassroom;
-import Server.Server;
+import Server.SlickClient;
+import Server.SlickServer;
+import frame.Player;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,16 +9,31 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
+import org.newdawn.slick.AppGameContainer;
+import org.lwjgl.*;
 public class DysfunctionalClassroom {
     public static void main(String[] args) {
-        Server myServer;
+        SlickServer myServer;
+        SlickClient myClient;
+        Player me = new Player("Jeremy");
         try {
-            myServer = new Server(9797);
+            myServer = new SlickServer(9797);
+            myClient = new SlickClient(me);
+            AppGameContainer appgc = new AppGameContainer(myClient);
+            appgc.setDisplayMode(1000, 600, false);
+            appgc.start();
+            myClient.connect(myServer.getIP(), myServer.getPort());
             System.out.println("Good1");
         }
         catch(Exception e) {
             return;
         }
+        
+        
+        
+        
+        
+        /*
         try(
             //System.out.println("Good2");
             Socket kkSocket = new Socket(myServer.getIP(),myServer.getPort());
@@ -52,7 +69,7 @@ public class DysfunctionalClassroom {
         } catch (IOException e) {
             System.err.println("Couldn't get I/O for the connection to the IP");
             System.exit(1);
-        }
+        }*/
     }
     
 }

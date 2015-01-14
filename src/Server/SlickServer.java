@@ -1,4 +1,7 @@
 package Server;
+import frame.Card;
+import io.SlickInteractivePanel;
+import io.SlickPanel;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,15 +11,18 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-public class Server {
+import org.newdawn.slick.Color;
+public class SlickServer {
     private ServerSocket server;
     private Socket socket;
     private int port;
-    public Server(int port) throws IOException {
+    public SlickServer(int port) throws IOException {
         server = new ServerSocket(port);
         this.port = port;
+        startServer();
     }
     public String getIP() throws UnknownHostException {return Inet4Address.getLocalHost().getHostAddress();}
     public int getPort(){return port;}
@@ -45,9 +51,14 @@ public class Server {
         }
     }
     public class ServerPlayCards implements Runnable {
+        Card[] cardPool;
+        public ServerPlayCards(int numNeeded) {
+            cardPool = new Card[numNeeded];
+        }
         @Override
         public void run() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            //for(Card card:cardPool)
+                //card = ;
         }
     }
     public class ServerSelectWinner implements Runnable {
@@ -61,6 +72,13 @@ public class Server {
         public void run() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
+    }
+    
+    public static void runInput(SlickInteractivePanel panel) {
+        Random hi = new Random();
+        Color[] colors = new Color[] {Color.yellow, Color.red, Color.blue, Color.white};
+        panel.setBackgroundColor(colors[hi.nextInt(colors.length)]);
+        
     }
     
 }

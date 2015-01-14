@@ -15,6 +15,8 @@ public class SlickInteractivePanel extends AbstractComponent implements SlickPan
     private Color backgroundColor, borderColor;
     private SlickPanel parent;
     private final GUIContext gui;
+    
+    private boolean loop;
     public SlickInteractivePanel(GUIContext gui, float x, float y, float width, float height) {
         super(gui);
         this.gui = gui;
@@ -30,6 +32,7 @@ public class SlickInteractivePanel extends AbstractComponent implements SlickPan
         backgroundColor = Color.transparent;
         borderColor = Color.transparent;
         parent = null;
+        loop = true;
     }
     @Override
     public void render(GUIContext gc, Graphics g) throws SlickException {
@@ -146,5 +149,15 @@ public class SlickInteractivePanel extends AbstractComponent implements SlickPan
             renderX = Math.round(x * parent.getHeight());
             renderY = Math.round(y * parent.getHeight());
         }
+    }
+    @Override
+    public void mousePressed(int button, int x, int y) {
+        if (button == 0 && x >= renderX && x <= renderX + renderWidth && y >= renderY && y <= renderY + renderHeight)
+            loop = false;
+        
+    }
+    public void getInput() {
+        loop = true;
+        while(loop);
     }
 }
