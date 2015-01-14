@@ -9,6 +9,12 @@ import org.newdawn.slick.gui.GUIContext;
 
 public interface SlickPanel {
     /**
+     * Initializes the panel.
+     * @param gc The game container for the game.
+     * @param g The graphics to draw to.
+     */
+    public void init(GUIContext gc, Graphics g);
+    /**
      * Renders the panel.
      * @param gc The game container for the game.
      * @param g The graphics to draw to.

@@ -1,38 +1,44 @@
 package io;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
+import org.newdawn.slick.MouseListener;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.GUIContext;
 
-public class SlickInteractivePanel extends AbstractComponent implements SlickPanel {
-    private int renderX, renderY, renderWidth, renderHeight, borderWidth;
+public class SlickOutputPanel extends OutputStream implements SlickPanel, MouseListener {
+    private int renderX, renderY, renderWidth, renderHeight, borderWidth, windowHeight, windowWidth;
     private float x, y, width, height;
     private final List<SlickPanel> components;
     private Color backgroundColor, borderColor;
     private SlickPanel parent;
-    private final GUIContext gui;
     
     private boolean loop;
-    public SlickInteractivePanel(GUIContext gui, float x, float y, float width, float height) {
-        super(gui);
-        this.gui = gui;
+    public SlickOutputPanel(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        renderX = Math.round(gui.getWidth() * x);
-        renderY = Math.round(gui.getHeight() * y);
-        renderWidth = Math.round(gui.getWidth() * width);
-        renderHeight = Math.round(gui.getHeight() * height);
         components = new ArrayList<>();
         backgroundColor = Color.transparent;
         borderColor = Color.transparent;
         parent = null;
         loop = true;
+    }
+    @Override
+    public void init(GUIContext gc, Graphics g) {
+        windowWidth = gc.getWidth();
+        windowHeight = gc.getHeight();
+        renderX = Math.round(gc.getWidth() * x);
+        renderY = Math.round(gc.getHeight() * y);
+        renderWidth = Math.round(gc.getWidth() * width);
+        renderHeight = Math.round(gc.getHeight() * height);
     }
     @Override
     public void render(GUIContext gc, Graphics g) throws SlickException {
@@ -69,25 +75,25 @@ public class SlickInteractivePanel extends AbstractComponent implements SlickPan
     @Override
     public void setWidth(float width) {
         this.width = width;
-        if (parent == null)renderWidth = Math.round(this.gui.getWidth() * width);
+        if (parent == null)renderWidth = Math.round(windowWidth * width);
         else renderWidth = Math.round(width * parent.getWidth());
     }
     @Override
     public void setHeight(float height) {
         this.height = height;
-        if (parent == null) renderHeight = Math.round(this.gui.getHeight() * height);
+        if (parent == null) renderHeight = Math.round(windowHeight * height);
         else renderHeight = Math.round(height * parent.getHeight());
     }
     @Override
     public void setX(float x) {
         this.x = x;
-        if (parent == null) renderX = Math.round(this.gui.getWidth() * x);
+        if (parent == null) renderX = Math.round(windowWidth * x);
         else renderX = Math.round(x * parent.getWidth());
     }
     @Override
     public void setY(float y) {
         this.y = y;
-        if (parent == null) renderY = Math.round(this.gui.getHeight() * y);
+        if (parent == null) renderY = Math.round(windowHeight * y);
         else renderY = Math.round(y * parent.getHeight());
     }
     @Override
@@ -142,8 +148,8 @@ public class SlickInteractivePanel extends AbstractComponent implements SlickPan
         this.x = x;
         this.y = y;
         if (parent == null){
-            renderX = Math.round(this.gui.getHeight() * x);
-            renderY = Math.round(this.gui.getHeight() * y);
+            renderX = Math.round(windowWidth * x);
+            renderY = Math.round(windowHeight * y);
         }
         else {
             renderX = Math.round(x * parent.getHeight());
@@ -152,12 +158,41 @@ public class SlickInteractivePanel extends AbstractComponent implements SlickPan
     }
     @Override
     public void mousePressed(int button, int x, int y) {
-        if (button == 0 && x >= renderX && x <= renderX + renderWidth && y >= renderY && y <= renderY + renderHeight)
+        System.out.println("Clicky");
+        if (button == 0 && x >= renderX && x <= renderX + renderWidth && y >= renderY && y <= renderY + renderHeight) {
+            System.out.println("Click2");
             loop = false;
+        }
         
     }
-    public void getInput() {
-        loop = true;
-        while(loop);
-    }
+
+    @Override
+    public void mouseWheelMoved(int i) {}
+
+    @Override
+    public void mouseClicked(int i, int i1, int i2, int i3) {}
+
+    @Override
+    public void mouseReleased(int i, int i1, int i2) {}
+
+    @Override
+    public void mouseMoved(int i, int i1, int i2, int i3) {}
+
+    @Override
+    public void mouseDragged(int i, int i1, int i2, int i3) {}
+
+    @Override
+    public void setInput(Input input) {}
+
+    @Override
+    public boolean isAcceptingInput() {return false;}
+
+    @Override
+    public void inputEnded() {}
+
+    @Override
+    public void inputStarted() {}
+
+    @Override
+    public void write(int b) throws IOException {}
 }

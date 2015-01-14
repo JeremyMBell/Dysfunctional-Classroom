@@ -1,6 +1,6 @@
 package Server;
 import frame.Card;
-import io.SlickInteractivePanel;
+import io.SlickOutputPanel;
 import io.SlickPanel;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +17,6 @@ import java.util.concurrent.Executors;
 import org.newdawn.slick.Color;
 public class SlickServer {
     private ServerSocket server;
-    private Socket socket;
     private int port;
     public SlickServer(int port) throws IOException {
         server = new ServerSocket(port);
@@ -34,19 +33,25 @@ public class SlickServer {
     public class ServerWait implements Runnable {
         @Override
         public void run() {
-            try {
-                socket = server.accept();
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            try (
+                Socket socket = server.accept();
+                SlickOutputPanel out = SlickSocket.getOutputPanel(socket);
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                String inputLine, outputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    outputLine = inputLine;
-                    out.println(outputLine);
-                    if (outputLine.equals("Bye."))
-                        break;
+                ){
+                System.out.println("Got panel.");
+                System.out.println("Good before loop.");
+                while (true) {
+                    out.setWidth(out.getPercentageWidth() - .01f);
+                    System.out.println("Good before asking for a line.");
+                    String name = in.readLine();
+                    System.out.println("Good after the reading of the line.");
+                    if (name == null) {
+                        return;
+                    } else runInput(out);
                 }
             } catch (IOException ex) {
                 System.out.println("Thread failed.");
+                ex.printStackTrace();
             }
         }
     }
@@ -74,7 +79,7 @@ public class SlickServer {
         }
     }
     
-    public static void runInput(SlickInteractivePanel panel) {
+    public static void runInput(SlickOutputPanel panel) {
         Random hi = new Random();
         Color[] colors = new Color[] {Color.yellow, Color.red, Color.blue, Color.white};
         panel.setBackgroundColor(colors[hi.nextInt(colors.length)]);

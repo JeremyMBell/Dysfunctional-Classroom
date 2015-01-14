@@ -14,7 +14,7 @@ public class Output extends BasicGame
 {
     private Lobby room;
     public static final MutableFont deflt = new MutableFont(new Font("Cambria", Font.PLAIN, 20), true);
-    private SlickInteractivePanel publicViewing, privateViewing;
+    private SlickOutputPanel publicViewing, privateViewing;
         
     public Output(String gamename)
     {
@@ -24,7 +24,7 @@ public class Output extends BasicGame
     @Override
     public void init(GameContainer gc) throws SlickException {
         gc.setTargetFrameRate(30);
-        //publicViewing = new SlickInteractivePanel(gc,);
+        //publicViewing = new SlickOutputPanel(gc,);
         
     }
 

@@ -9,25 +9,28 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.newdawn.slick.AppGameContainer;
 import org.lwjgl.*;
+import org.newdawn.slick.SlickException;
 public class DysfunctionalClassroom {
+    public static AppGameContainer appgc;
     public static void main(String[] args) {
         SlickServer myServer;
         SlickClient myClient;
         Player me = new Player("Jeremy");
         try {
             myServer = new SlickServer(9797);
-            myClient = new SlickClient(me);
-            AppGameContainer appgc = new AppGameContainer(myClient);
-            appgc.setDisplayMode(1000, 600, false);
-            appgc.start();
-            myClient.connect(myServer.getIP(), myServer.getPort());
-            System.out.println("Good1");
+            myClient = new SlickClient(me, myServer.getIP(), myServer.getPort());
+            appgc = new AppGameContainer(myClient);
         }
         catch(Exception e) {
+            System.out.println("caught");
             return;
         }
+        Thread gui = new Thread(new GUI(appgc));
+        gui.start();
         
         
         
@@ -70,6 +73,24 @@ public class DysfunctionalClassroom {
             System.err.println("Couldn't get I/O for the connection to the IP");
             System.exit(1);
         }*/
+    }
+    
+    public static class GUI implements Runnable {
+        private SlickClient client;
+        private AppGameContainer appgc;
+        public GUI(AppGameContainer appgc) {
+            this.appgc = appgc;
+        }
+        @Override
+        public void run() {
+            try {
+                appgc.setDisplayMode(1000, 600, false);
+                appgc.start();
+            } catch (SlickException ex) {
+                System.out.println("GUI failed.");
+            }
+        }
+    
     }
     
 }

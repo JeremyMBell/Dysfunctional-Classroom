@@ -1,7 +1,8 @@
 package Server;
 
 import frame.Player;
-import io.SlickInteractivePanel;
+import io.SlickInputPanel;
+import io.SlickOutputPanel;
 import java.io.IOException;
 import java.net.Socket;
 import org.newdawn.slick.BasicGame;
@@ -15,20 +16,23 @@ public class SlickClient extends BasicGame {
     /**
      * Information that will be displayed for all to see.
      */
-    private SlickInteractivePanel publicPanel;
+    private SlickOutputPanel publicPanel;
     /**
      * Information that only this person can see.
      */
-    private SlickInteractivePanel privatePanel;
-    public SlickClient(Player player) {
+    private SlickInputPanel privatePanel;
+    private Socket mySocket;
+    public SlickClient(Player player, String ip, int port) {
         super("Dysfunctional Classroom");
         this.player = player;
+        connect(ip, port);
     }
 
     @Override
     public void init(GameContainer gc) throws SlickException {
-        publicPanel = new SlickInteractivePanel(gc, 0, 0, 1, .5f);
-        privatePanel = new SlickInteractivePanel(gc, 0, .5f, 1, .5f);
+        try {
+        privatePanel = new SlickInputPanel(0, .3f, 1, .7f);
+        }catch(IOException e){System.out.println("I failed.");}
         
         publicPanel.setBackgroundColor(Color.yellow);
         privatePanel.setBackgroundColor(Color.red);
@@ -36,6 +40,7 @@ public class SlickClient extends BasicGame {
 
     @Override
     public void update(GameContainer gc, int i) throws SlickException {}
+        
 
     @Override
     public void render(GameContainer gc, Graphics g) throws SlickException {
@@ -43,17 +48,24 @@ public class SlickClient extends BasicGame {
         privatePanel.render(gc, g);
     }
     public void connect(String ip, int port) {
-        try (Socket socket = new Socket(ip, port);){
-            while(true) {
-                privatePanel.getInput();
-                SlickServer.runInput(publicPanel);
-            }
-            
+        try {
+            mySocket = new Socket(ip, port);
+            publicPanel = SlickSocket.getOutputPanel(mySocket);
         } catch (IOException ex) {
             System.out.println("Connection failed.");
         }
-        
-        
+    }
+    @Override
+    public void mousePressed(int button, int x, int y){
+        System.out.println("Clicky");
+        if (button == 0 && x >= privatePanel.getX() && x <= privatePanel.getX() + privatePanel.getWidth()
+            && y >= privatePanel.getY() && y <= privatePanel.getY() + privatePanel.getHeight()) {
+            System.out.println("Click2");
+            go();
+        }
+    }
+    public void go() {
+        SlickServer.runInput(publicPanel);
     }
     
 }
