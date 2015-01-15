@@ -33,11 +33,11 @@ public class SlickServer {
     public class ServerWait implements Runnable {
         @Override
         public void run() {
-            try (
+            try {
                 Socket socket = server.accept();
                 SlickOutputPanel out = SlickSocket.getOutputPanel(socket);
+                out.setBackgroundColor(Color.yellow);
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                ){
                 System.out.println("Got panel.");
                 System.out.println("Good before loop.");
                 while (true) {
@@ -80,6 +80,7 @@ public class SlickServer {
     }
     
     public static void runInput(SlickOutputPanel panel) {
+        System.out.println("Run input.");
         Random hi = new Random();
         Color[] colors = new Color[] {Color.yellow, Color.red, Color.blue, Color.white};
         panel.setBackgroundColor(colors[hi.nextInt(colors.length)]);
